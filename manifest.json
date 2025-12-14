@@ -1,11 +1,20 @@
 {
-  "package": "ai_type_grader",
-  "name": "AI Type Grader",
-  "mod": 1765542874,
-  "version": "1.2.0",
-  "author": "Yuwa Yanagitani",
-  "homepage": "https://ankiweb.net/shared/info/0000000000",
-  "min_point_version": 250900,
-  "max_point_version": 260000,
-  "description": "Automatically grades typed answers using OpenAI, Gemini, or local similarity scoring, and (optionally) chooses the default ease (Again/Hard/Good/Easy) automatically. Supports numbered config keys like '01. enabled' to keep ordering stable."
+  "name": "anki-ai-grader",
+  "version": "0.1.0",
+  "description": "An add-on that scores typed-answer cards (e.g., “Type in the Answer”) using AI or a local fallback, then shows the result as a badge and/or tooltip.",
+  "auther": "Yuwa Yanagitani",
+  "homepage": "https://github.com/yuwayanagitani/anki-ai-grader",
+  "license": "MIT",
+  "min_anki_version": "23.10.0",
+  "max_anki_version": null,
+  "requirements": [],
+  "entry_point": "__init__.py",
+  "config_file": null,
+  "tags": [
+    "anki",
+    "addon",
+    "ai",
+    "grading"
+  ],
+  "notes": ""
 }
