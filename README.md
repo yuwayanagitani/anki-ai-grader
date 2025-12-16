@@ -1,216 +1,150 @@
-# 🧪⌨️✨ AI Type Grader (Anki Add-on)
+# 🧠 AI Grader for Anki (AI Grade Assigner)
 
-**AI Type Grader** automatically grades your **typed answer** in Anki (0–100%) using:
-- ✅ OpenAI
-- ✅ Gemini
-- ✅ Local fallback (string similarity)
-
-It then:
-- shows a **score badge** on the back of the card (optional)
-- shows a **tooltip** with the score + provider (optional)
-- can optionally **override Enter/Space default ease** (Again/Hard/Good/Easy) based on the score
-
-This is designed for “type the answer” workflows where you want more nuance than a simple right/wrong check.
+**AI Grader** (a.k.a **AI Grade Assigner**) is an Anki add-on that uses AI to automatically **evaluate your flashcard answers** and assign a grade, helping you optimize review timing and identify spots for improvement.
 
 ---
 
-## 🌈 What it does
+## 🔗 AnkiWeb Page
 
-When you reveal the answer in the Reviewer:
+This add-on is officially published on **AnkiWeb**:
 
-1. Reads your **typed answer** (`Reviewer.typedAnswer`)
-2. Reads the **correct answer** from a configurable field (default: `Back`)
-3. Grades similarity using:
-   - AI provider(s), or
-   - local similarity fallback if AI fails
-4. Displays:
-   - a badge on the card (optional)
-   - a tooltip (optional)
-5. Converts the score into an Anki ease (1–4) using thresholds:
-   - Easy / Good / Hard / Again
+👉 https://ankiweb.net/shared/info/1150481237 :contentReference[oaicite:1]{index=1}
 
-If enabled, it also patches Anki’s default ease decision so pressing **Enter/Space** can automatically choose the recommended button.
+Installing from AnkiWeb is recommended for the easiest setup and **automatic updates**.
 
 ---
 
-## ✅ Supported grading modes
+## 🎯 Overview
 
-### 1) OpenAI
-- Uses the **OpenAI Responses API**
-- Sends a short prompt:
-  - “Model: … / Student: …”
-  - asks for **a number 0–100 only**
+AI Grader enhances your review workflow by:
 
-### 2) Gemini
-- Uses **generateContent**
-- Same 0–100 output rule
+- 📝 Using AI to **grade card responses** based on your typed answer  
+- 📊 Providing consistent, context-aware grading beyond manual selection  
+- 🔄 Supporting batch grading for cards selected in the Browser  
+- ⚙️ Allowing configuration of grading criteria and output fields
 
-### 3) Local fallback
-If AI fails (network, rate-limit, invalid key, etc.), it falls back to:
-- `difflib.SequenceMatcher` similarity ratio → 0–100
+Instead of relying solely on manual buttons (Again/Hard/Good/Easy), this add-on can **suggest grades** using language models, ideal for self-study, language labs, or complex open-ended answer cards.
 
 ---
 
-## 🚀 How to use
+## 🚀 How It Works
 
-1. Use an Anki note type with **typing** enabled (e.g. “type in the answer”)
-2. Review as usual
-3. When you show the answer:
-   - the add-on grades your typed input
-   - the score appears (badge and/or tooltip)
+1. During review or in the Browser, trigger **AI Grader**.  
+2. The add-on sends your card question + your answer to the AI provider.  
+3. The model returns a suggested grade (e.g., “Good”, “Hard”).  
+4. The grade can be written to your Anki fields or used to inform your manual selection.
 
-Optional:
-- With `auto_answer = true`, pressing **Enter/Space** can automatically follow the recommended ease.
+This can help you:
 
----
-
-## 🛠️ Installation
-
-### Option 1: AnkiWeb (recommended)
-Install normally via Anki’s add-on workflow and restart Anki.
-
-### Option 2: Manual (GitHub)
-Place the add-on folder in your Anki `addons21` folder and restart Anki.
+- Get instant feedback when you’re unsure about your recall strength.  
+- Review more consistently across study sessions.  
+- Spot patterns in mistakes and adjust your focus.
 
 ---
 
-## 🔑 API keys
+## 📦 Installation
 
-You can store API keys in either:
-- the add-on config (recommended for convenience), or
-- environment variables (fallback)
+### ⬇️ From AnkiWeb (Recommended)
 
-### OpenAI
-- Config: `openai_api_key`
-- Env fallback: `OPENAI_API_KEY`
+1. Open **Anki**  
+2. Go to **Tools → Add-Ons → Browse & Install**  
+3. Search for **AI Grade Assigner**  
+4. Install and **restart Anki**
 
-### Gemini
-- Config: `gemini_api_key`
-- Env fallback: `GEMINI_API_KEY` or `GOOGLE_API_KEY`
+### 📁 Manual Installation (GitHub)
 
-If no key is available, the add-on will skip that provider.
+1. Clone or download this repository  
+2. Place it into:
+   `Anki2/addons21/anki-ai-grader`  
+3. Restart **Anki**
+
+---
+
+## 🔑 API Key Setup
+
+AI Grader needs an API key for the selected AI provider.
+
+| Provider | Environment Variable |
+|----------|----------------------|
+| OpenAI | `OPENAI_API_KEY` |
+| Gemini | `GEMINI_API_KEY` |
+
+API keys can be set via:
+- System environment variables, or  
+- The add-on **Settings / Config** dialog
 
 ---
 
 ## ⚙️ Configuration
 
 Open:
-- **Tools → Add-ons → AI Type Grader → Config**
 
-This add-on uses **numbered keys** (e.g. `01. enabled`) to keep config ordering stable.  
-It also accepts both numbered and unnumbered keys for backward compatibility.
+**Tools → Add-Ons → AI Grader → Config**
 
-### General
-- `01. enabled`  
-  Enable/disable the add-on
+Key options include:
 
-- `02. provider`  
-  `auto` / `openai` / `gemini` / `local`
-
-- `03. provider_auto_order`  
-  When provider = `auto`, try providers in this order  
-  Default: `["openai", "gemini"]`
-
-### OpenAI
-- `10. openai_api_key` (optional if env var is set)
-- `11. openai_model` (default: `gpt-4o-mini`)
-- `12. openai_api_url` (default: `https://api.openai.com/v1/responses`)
-
-### Gemini
-- `20. gemini_api_key` (optional if env var is set)
-- `21. gemini_model` (default: `gemini-2.5-flash-lite`)
-- `22. gemini_api_url`  
-  Default template:  
-  `https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent`
-
-### Scoring
-- `30. answer_field`  
-  Field name used as the “correct answer” (default: `Back`)
-
-Thresholds (0–100):
-- `31. easy_min` (default: 80)
-- `32. good_min` (default: 60)
-- `33. hard_min` (default: 40)
-
-Score → Ease mapping:
-- score ≥ easy_min → **Easy (4)**
-- score ≥ good_min → **Good (3)**
-- score ≥ hard_min → **Hard (2)**
-- otherwise → **Again (1)**
-
-### UI
-- `40. show_tooltip`  
-  Show a tooltip with the score/provider
-
-- `41. show_on_card`  
-  Show a badge on the **card back**
-
-Badge states:
-- “⚙ AI grading…” while pending
-- “Score: 87%” with color-coded styling after completion
-
-### Behavior
-- `50. auto_answer`  
-  If enabled, patches Anki’s default ease so **Enter/Space** can use the AI-recommended ease.
-
-### Networking
-- `60. timeout_sec` (default: 20)
-- `61. max_output_tokens` (default: 16)  
-  (The add-on asks for a number only, so small token limits are enough.)
+- Provider selection (OpenAI / Gemini)  
+- Model name  
+- Which fields to read for question/answer  
+- Output destination (graded field, tag appending, note update)  
+- Grading style and thresholds
 
 ---
 
-## 🎨 How the badge looks
+## 🧪 Usage
 
-The add-on injects CSS into the Reviewer WebView and shows a centered badge:
+### Review Mode
 
-- **Easy**: blue
-- **Good**: green
-- **Hard**: yellow
-- **Again**: red
-- **Pending**: gray, dashed border
+While reviewing:
 
-This display is purely visual and does not modify your notes.
+1. Answer the card as usual  
+2. Trigger **AI Grader** from the Reviewer menu  
+3. View the suggested grade  
+4. Accept or manually override
 
----
+### Batch Grading
 
-## 🧯 Troubleshooting
+In the Browser:
 
-### “AI grading: field 'Back' not found.”
-Your configured `answer_field` does not exist in the note type.  
-Fix the field name in settings (Scoring tab).
+1. Select multiple cards  
+2. Run **AI Grader: Grade selected cards**  
+3. Suggested grades will be written to configured fields or tags
 
-### Always falling back to “local”
-- API keys are missing or invalid
-- Provider is set to `local`
-- Network issues / rate limits
-
-Check:
-- OpenAI key: config or `OPENAI_API_KEY`
-- Gemini key: config or `GEMINI_API_KEY` / `GOOGLE_API_KEY`
-
-### “OpenAI HTTP …” / “Gemini HTTP …”
-Provider returned an error response. Common causes:
-- invalid key
-- quota / rate limit
-- wrong endpoint URL
-- network connectivity
-
-### Enter/Space feels “different”
-That’s `auto_answer`. Disable it if you want Anki’s default behavior.
+This is useful when you want to retrospectively evaluate a deck or track performance over time.
 
 ---
 
-## 🔒 Privacy
+## ⚠️ Notes on Privacy
 
-If AI providers are enabled, your card text is sent to external APIs:
-- your typed answer
-- the correct answer field content
+Card contents (questions and your answers) are sent to external AI services for grading.  
+Avoid sending **sensitive or personal information** unless you understand the provider’s privacy policy.
 
-Do not use with sensitive/private data unless you understand the provider’s policies.
+---
+
+## 🛠 Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| “No current card” | Run during review or select cards in Browser |
+| Grades not applied | Check field mapping in Config |
+| API errors | Verify API key and internet connection |
+| Slow response | Choose a lighter AI model |
 
 ---
 
 ## 📜 License
 
-See `LICENSE` in this repository.
+MIT License
+
+---
+
+## 🔧 Related Add-Ons
+
+These add-ons form an AI-powered ecosystem for Anki:
+
+- **AI Card Explainer** — Generates natural explanations  
+- **AI Card Translator** — Translates cards on the fly  
+- **AI Card Splitter** — Breaks complex cards into pieces  
+- **HTML Exporter for Anki** — Export cards to HTML / PDF
+
+Together they enhance your study flow with **AI-assisted quality, understanding, and review automation**.
